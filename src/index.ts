@@ -12,12 +12,13 @@ const PLUGIN_ID = 'telemetry-router:plugin';
 export const ITelemetryRouter = new Token<ITelemetryRouter>(PLUGIN_ID)
 
 export interface ITelemetryRouter {
-  hi(): any;
+  hi(data: Object): any;
 }
 
 class telemetryRouter implements ITelemetryRouter {
-  hi(): any {
+  hi(data: Object): any {
     console.log("*************HELLO FROM TELEMETRY ROUTER***************")
+    console.log("This is my data", data)
   }
 }
 /**
@@ -41,7 +42,9 @@ const plugin: JupyterFrontEndPlugin<telemetryRouter> = {
       });
     const _telemetryRouter = new telemetryRouter()
     console.log('router side test: ')
-    _telemetryRouter.hi()
+    _telemetryRouter.hi({
+      "name": "scrolling"
+    })
     return _telemetryRouter;
   }
 };
