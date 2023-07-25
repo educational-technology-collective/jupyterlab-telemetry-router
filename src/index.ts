@@ -2,28 +2,54 @@ import { Token } from '@lumino/coreutils';
 
 import {
   JupyterFrontEnd,
-  JupyterFrontEndPlugin
+  JupyterFrontEndPlugin,
+  // LabShell
 } from '@jupyterlab/application';
 
 import { requestAPI } from './handler';
+
+import { INotebookContent } from '@jupyterlab/nbformat';
+
+import {
+  NotebookPanel,
+  // Notebook
+} from '@jupyterlab/notebook';
+
+export interface INotebookState {
+  session_id: string;
+  seq: number;
+  notebook: INotebookContent;
+}
 
 const PLUGIN_ID = 'telemetry-router:plugin';
 
 export const ITelemetryRouter = new Token<ITelemetryRouter>(PLUGIN_ID)
 
 export interface ITelemetryRouter {
-  consumeEventSignal(data: Object): any;
+  loadNotebook(notebookPanel: NotebookPanel): void;
+  consumeEventSignal(data: Object): void;
 }
 
-class telemetryRouter implements ITelemetryRouter {
-  consumeEventSignal(data: Object): any {
-    console.log("*************HELLO FROM TELEMETRY ROUTER***************")
-    console.log("data received by router", data)
+export class telemetryRouter implements ITelemetryRouter {
+  // private notebookState: INotebookState; 
+  private notebookPanel?: NotebookPanel;
+
+  constructor() { }
+
+  loadNotebook(notebookPanel: NotebookPanel) {
+    this.notebookPanel = notebookPanel
+  }
+
+  consumeEventSignal(event: Object): any {
+    console.log("router received event signal", event)
+    const data = {
+      event: event,
+      notebookPanel: this.notebookPanel,
+    }
+    console.log("route integrated data", data)
   }
 }
-/**
- * Initialization data for the telemetry-router extension.
- */
+
 const plugin: JupyterFrontEndPlugin<telemetryRouter> = {
   id: PLUGIN_ID,
   description: 'A JupyterLab extension.',
@@ -40,12 +66,17 @@ const plugin: JupyterFrontEndPlugin<telemetryRouter> = {
           `The telemetry_router server extension appears to be missing.\n${reason}`
         );
       });
-
     const _telemetryRouter = new telemetryRouter()
-    console.log('router side test: ')
-    _telemetryRouter.consumeEventSignal({
-      "POSITION": "ROUTER"
-    })
+    // TEST
+    // ****
+    // const labShell = app.shell as LabShell;
+    // labShell.currentChanged.connect(() => {
+    //   const currentWidget = app.shell.currentWidget;
+    //   const notebookPanel = currentWidget as NotebookPanel;
+    //   _telemetryRouter.loadNotebook(notebookPanel)
+    //   _telemetryRouter.consumeEventSignal({ name: 'routerTest' })
+    // })
+    // ****
     return _telemetryRouter;
   }
 };
