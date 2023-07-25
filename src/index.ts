@@ -1,4 +1,4 @@
-import { Token } from '@lumino/coreutils';
+import { UUID, Token } from '@lumino/coreutils';
 
 import {
   JupyterFrontEnd,
@@ -8,18 +8,12 @@ import {
 
 import { requestAPI } from './handler';
 
-import { INotebookContent } from '@jupyterlab/nbformat';
+// import { INotebookContent } from '@jupyterlab/nbformat';
 
 import {
   NotebookPanel,
   // Notebook
 } from '@jupyterlab/notebook';
-
-export interface INotebookState {
-  session_id: string;
-  seq: number;
-  notebook: INotebookContent;
-}
 
 const PLUGIN_ID = 'telemetry-router:plugin';
 
@@ -30,11 +24,15 @@ export interface ITelemetryRouter {
   consumeEventSignal(data: Object): void;
 }
 
-export class telemetryRouter implements ITelemetryRouter {
-  // private notebookState: INotebookState; 
+export class TelemetryRouter implements ITelemetryRouter {
+  private session_id: string;
+  private seq: number;
   private notebookPanel?: NotebookPanel;
 
-  constructor() { }
+  constructor() {
+    this.session_id = UUID.uuid4();
+    this.seq = 0;
+  }
 
   loadNotebook(notebookPanel: NotebookPanel) {
     this.notebookPanel = notebookPanel
@@ -42,15 +40,24 @@ export class telemetryRouter implements ITelemetryRouter {
 
   consumeEventSignal(event: Object): any {
     console.log("router received event signal", event)
+
     const data = {
       event: event,
-      notebookPanel: this.notebookPanel,
+      notebookState: {
+        session_id: this.session_id,
+        seq: this.seq,
+        notebookPanel: this.notebookPanel
+      },
     }
-    console.log("route integrated data", data)
+
+    // prepare sequence number for NEXT inquiry
+    this.seq = this.seq + 1;
+
+    console.log("router integrated data", data)
   }
 }
 
-const plugin: JupyterFrontEndPlugin<telemetryRouter> = {
+const plugin: JupyterFrontEndPlugin<TelemetryRouter> = {
   id: PLUGIN_ID,
   description: 'A JupyterLab extension.',
   provides: ITelemetryRouter,
@@ -66,18 +73,9 @@ const plugin: JupyterFrontEndPlugin<telemetryRouter> = {
           `The telemetry_router server extension appears to be missing.\n${reason}`
         );
       });
-    const _telemetryRouter = new telemetryRouter()
-    // TEST
-    // ****
-    // const labShell = app.shell as LabShell;
-    // labShell.currentChanged.connect(() => {
-    //   const currentWidget = app.shell.currentWidget;
-    //   const notebookPanel = currentWidget as NotebookPanel;
-    //   _telemetryRouter.loadNotebook(notebookPanel)
-    //   _telemetryRouter.consumeEventSignal({ name: 'routerTest' })
-    // })
-    // ****
-    return _telemetryRouter;
+
+    const telemetryRouter = new TelemetryRouter()
+    return telemetryRouter;
   }
 };
 
