@@ -12,13 +12,13 @@ const PLUGIN_ID = 'telemetry-router:plugin';
 export const ITelemetryRouter = new Token<ITelemetryRouter>(PLUGIN_ID)
 
 export interface ITelemetryRouter {
-  hi(data: Object): any;
+  consumeEventSignal(data: Object): any;
 }
 
 class telemetryRouter implements ITelemetryRouter {
-  hi(data: Object): any {
+  consumeEventSignal(data: Object): any {
     console.log("*************HELLO FROM TELEMETRY ROUTER***************")
-    console.log("This is my data", data)
+    console.log("data received by router", data)
   }
 }
 /**
@@ -40,10 +40,11 @@ const plugin: JupyterFrontEndPlugin<telemetryRouter> = {
           `The telemetry_router server extension appears to be missing.\n${reason}`
         );
       });
+
     const _telemetryRouter = new telemetryRouter()
     console.log('router side test: ')
-    _telemetryRouter.hi({
-      "name": "scrolling"
+    _telemetryRouter.consumeEventSignal({
+      "POSITION": "ROUTER"
     })
     return _telemetryRouter;
   }
