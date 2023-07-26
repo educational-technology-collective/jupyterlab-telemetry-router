@@ -1,15 +1,21 @@
 {
   "name": "telemetry-router",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "A JupyterLab extension.",
   "keywords": [
     "jupyter",
     "jupyterlab",
     "jupyterlab-extension"
   ],
-  "homepage": "",
+  "homepage": "https://github.com/educational-technology-collective/telemetry-router",
+  "bugs": {
+    "url": "https://github.com/educational-technology-collective/telemetry-router/issues"
+  },
   "license": "BSD-3-Clause",
-  "author": "mengyanw <mengyanw@umich.edu>",
+  "author": {
+    "name": "mengyanw",
+    "email": "mengyanw@umich.edu"
+  },
   "files": [
     "lib/**/*.{d.ts,eot,gif,html,jpg,js,js.map,json,png,svg,woff2,ttf}",
     "style/**/*.{css,js,eot,gif,html,jpg,json,png,svg,woff2,ttf}"
@@ -19,7 +25,7 @@
   "style": "style/index.css",
   "repository": {
     "type": "git",
-    "url": ".git"
+    "url": "https://github.com/educational-technology-collective/telemetry-router.git"
   },
   "scripts": {
     "build": "jlpm build:lib && jlpm build:labextension:dev",
