@@ -3,7 +3,7 @@ import {
   JupyterFrontEndPlugin,
 } from '@jupyterlab/application';
 
-// import { requestAPI } from './handler';
+import { requestAPI } from './handler'
 
 import { NotebookPanel } from '@jupyterlab/notebook';
 
@@ -21,7 +21,7 @@ export interface ITelemetryRouter {
 }
 
 export class TelemetryRouter implements ITelemetryRouter {
-  private session_id?: string;
+  private sessionID?: string;
   private sequence: number;
   private notebookPanel?: NotebookPanel;
 
@@ -33,13 +33,13 @@ export class TelemetryRouter implements ITelemetryRouter {
     this.notebookPanel = notebookPanel
   }
 
-  consumeEventSignal(event: Object) {
+  async consumeEventSignal(event: Object) {
     // Check if session id received is equal to the stored session id &
     // Update sequence number accordingly
-    if (this.session_id === this.notebookPanel?.sessionContext.session?.id)
+    if (this.sessionID === this.notebookPanel?.sessionContext.session?.id)
       this.sequence = this.sequence + 1
     else {
-      this.session_id = this.notebookPanel?.sessionContext.session?.id
+      this.sessionID = this.notebookPanel?.sessionContext.session?.id
       this.sequence = 0
     }
 
@@ -47,14 +47,20 @@ export class TelemetryRouter implements ITelemetryRouter {
     const log = {
       event: event,
       notebookState: {
-        session_id: this.session_id,
+        // 'userID': ... ,
+        sessionID: this.sessionID,
         sequence: this.sequence,
+        notebookPath: this.notebookPanel?.context.path,
         notebookContent: this.notebookPanel?.model?.toJSON() as INotebookContent
       },
     }
 
     // Post to database
-    console.log("router log", log)
+    console.log("Request", log)
+
+    let responseMongo = await requestAPI<any>('mongo', { method: 'POST', body: JSON.stringify(log) });
+
+    console.log('Response', responseMongo);
   }
 }
 
