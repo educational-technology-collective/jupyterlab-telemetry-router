@@ -17,7 +17,7 @@ class RouteHandler(ExtensionHandlerMixin, JupyterHandler):
     # Jupyter server
     @tornado.web.authenticated
     def get(self, resource):
-        pass
+        return "hello world"
         # try:
         #     self.set_header('Content-Type', 'application/json')
 
