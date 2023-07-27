@@ -3,13 +3,13 @@ import {
   JupyterFrontEndPlugin,
 } from '@jupyterlab/application';
 
-import { requestAPI } from './handler'
-
 import { NotebookPanel } from '@jupyterlab/notebook';
 
 import { INotebookContent } from '@jupyterlab/nbformat';
 
 import { Token } from '@lumino/coreutils';
+
+import { Consumer, ConsoleLogger, MongoDBLogger } from './consumer';
 
 const PLUGIN_ID = 'telemetry-router:plugin';
 
@@ -20,34 +20,13 @@ export interface ITelemetryRouter {
   publishEvent(event: Object): void;
 }
 
-export interface IConsumer {
-  callback(log: any): void;
-}
-
-class ConsoleLogger implements IConsumer {
-  constructor() {
-    TelemetryRouter.registerConsumer(this);
-  }
-  callback(log: any) { console.log('Log', log); }
-}
-
-class MongoDBLogger implements IConsumer {
-  constructor() {
-    TelemetryRouter.registerConsumer(this);
-  }
-  async callback(log: any) {
-    let responseMongo = await requestAPI<any>('mongo', { method: 'POST', body: JSON.stringify(log) });
-    console.log('Response', responseMongo);
-  }
-}
-
 export class TelemetryRouter implements ITelemetryRouter {
   private sessionID?: string;
   private sequence: number = 0;
   private notebookPanel?: NotebookPanel;
 
-  static registeredConsumers: IConsumer[] = [];
-  static registerConsumer(consumer: IConsumer) {
+  static registeredConsumers: Consumer[] = [];
+  static registerConsumer(consumer: Consumer) {
     TelemetryRouter.registeredConsumers.push(consumer);
   }
 
@@ -77,16 +56,10 @@ export class TelemetryRouter implements ITelemetryRouter {
       },
     }
 
-    // Post to database
-    TelemetryRouter.registeredConsumers.forEach(element => {
-      element.callback(log);
+    // Send to consumer
+    TelemetryRouter.registeredConsumers.forEach(consumer => {
+      consumer.consume(log);
     });
-
-    // console.log("Request", log)
-
-    // let responseMongo = await requestAPI<any>('mongo', { method: 'POST', body: JSON.stringify(log) });
-
-    // console.log('Response', responseMongo);
   }
 }
 
@@ -100,8 +73,10 @@ const plugin: JupyterFrontEndPlugin<TelemetryRouter> = {
 
     const telemetryRouter = new TelemetryRouter()
 
+    // Register consumers for the router
     new ConsoleLogger();
     new MongoDBLogger();
+
     return telemetryRouter;
   }
 };
