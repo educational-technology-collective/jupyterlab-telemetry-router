@@ -6,7 +6,7 @@ class TelemetryRouterApp(ExtensionApp):
 
     name = "telemetry_router"
 
-    api_telemetry_url = Unicode("").tag(config=True)
+    api = Unicode("").tag(config=True)
     mongo_cluster = Unicode("").tag(config=True)
     mongo_db = Unicode("").tag(config=True)
     mongo_collection = Unicode("").tag(config=True)
@@ -16,10 +16,10 @@ class TelemetryRouterApp(ExtensionApp):
     
     def initialize_settings(self):
         try:
-            assert self.api_telemetry_url, "The c.TelemetryRouterApp.api_telemetry_url configuration setting must be set."
+            assert self.api, "The c.TelemetryRouterApp.api configuration setting must be set."
             assert self.mongo_cluster, "The c.TelemetryRouterApp.mongo_cluster configuration setting must be set."
 
-            self.api_telemetry_url = self.api_telemetry_url.strip()
+            self.api = self.api.strip()
             self.mongo_cluster = self.mongo_cluster.strip()
             self.mongo_db = self.mongo_db.strip()
             self.mongo_collection = self.mongo_collection.strip()

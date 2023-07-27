@@ -84,7 +84,7 @@ class RouteHandler(ExtensionHandlerMixin, JupyterHandler):
         with Session() as s:
             req = Request(
                 'POST',
-                self.extensionapp.api_telemetry_url + "/mongo",
+                self.extensionapp.api + "/mongo",
                 data=data,
                 headers={
                     'content-type': 'application/json'
