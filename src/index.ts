@@ -46,11 +46,14 @@ export class TelemetryRouter implements ITelemetryRouter {
       this.sequence = 0
     }
 
+    // Get environment data
+    const { workspaceID } = await requestAPI<any>('env')
+
     // Construct log
     const log = {
       event: event,
       notebookState: {
-        // 'userID': ... ,
+        workspaceID: workspaceID,
         sessionID: this.sessionID,
         sequence: this.sequence,
         notebookPath: this.notebookPanel?.context.path,
