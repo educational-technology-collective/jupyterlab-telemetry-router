@@ -11,6 +11,8 @@ import { Token } from '@lumino/coreutils';
 
 import { Consumer, ConsoleLogger, MongoDBLogger } from './consumer';
 
+import { requestAPI } from './handler';
+
 const PLUGIN_ID = 'telemetry-router:plugin';
 
 export const ITelemetryRouter = new Token<ITelemetryRouter>(PLUGIN_ID)
@@ -68,8 +70,9 @@ const plugin: JupyterFrontEndPlugin<TelemetryRouter> = {
   description: 'A JupyterLab extension.',
   provides: ITelemetryRouter,
   autoStart: true,
-  activate: (app: JupyterFrontEnd) => {
-    console.log('JupyterLab extension telemetry-router is activated!')
+  activate: async (app: JupyterFrontEnd) => {
+    const version = await requestAPI<string>('version')
+    console.log(`${PLUGIN_ID}: ${version}`)
 
     const telemetryRouter = new TelemetryRouter()
 

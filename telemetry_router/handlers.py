@@ -19,34 +19,18 @@ class RouteHandler(ExtensionHandlerMixin, JupyterHandler):
     def get(self, resource):
         try:
             self.set_header('Content-Type', 'application/json') 
-            if resource == 'test':
+            if resource == 'version':
+                self.finish(json.dumps(__version__))
+            elif resource == 'env':
                 self.finish(json.dumps({
-                    'data': 'hello, it is me'
-                }))
+                    'workspaceID': os.getenv('WORKSPACE_ID') if os.getenv('WORKSPACE_ID') is not None else 'UNDEFINED'
+                    }))
             else:
                 self.set_status(404)
         except Exception as e:
             self.log.error(str(e))
             self.set_status(500)
             self.finish(json.dumps(str(e)))
-        # try:
-        #     self.set_header('Content-Type', 'application/json')
-
-        #     if resource == 'config':
-        #         self.finish(json.dumps({
-        #             'telemetry' : self.extensionapp.telemetry,
-        #             'capture_notebook_events': self.extensionapp.capture_notebook_events,
-        #             'save_interval': self.extensionapp.save_interval,
-        #             'version':  __version__,
-        #             'workspace_id': os.getenv('WORKSPACE_ID') if os.getenv('WORKSPACE_ID') is not None else 'UNDEFINED'
-        #             }))
-        #     else:
-        #         self.set_status(404)
-
-        # except Exception as e:
-        #     self.log.error(str(e))
-        #     self.set_status(500)
-        #     self.finish(json.dumps(str(e)))
 
     @tornado.web.authenticated
     @tornado.gen.coroutine
