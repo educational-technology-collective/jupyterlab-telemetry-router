@@ -28,3 +28,15 @@ export class MongoDBLogger extends Consumer {
         console.log('MongoDBLogger', data);
     }
 }
+
+export class S3Logger extends Consumer {
+    constructor() { super() }
+    async consume(log: any) {
+        const responseS3 = await requestAPI<any>('s3', { method: 'POST', body: JSON.stringify(log) });
+        const data = {
+            request: log,
+            response: responseS3
+        }
+        console.log('S3Logger', data);
+    }
+}

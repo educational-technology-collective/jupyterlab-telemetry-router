@@ -9,7 +9,7 @@ import { INotebookContent } from '@jupyterlab/nbformat';
 
 import { Token } from '@lumino/coreutils';
 
-import { Consumer, ConsoleLogger, MongoDBLogger } from './consumer';
+import { Consumer, ConsoleLogger, MongoDBLogger, S3Logger } from './consumer';
 
 import { requestAPI } from './handler';
 
@@ -82,6 +82,7 @@ const plugin: JupyterFrontEndPlugin<TelemetryRouter> = {
     // Register consumers for the router
     new ConsoleLogger();
     new MongoDBLogger();
+    new S3Logger();
 
     return telemetryRouter;
   }
