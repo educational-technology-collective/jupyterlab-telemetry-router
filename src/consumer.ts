@@ -40,3 +40,15 @@ export class S3Logger extends Consumer {
         console.log('S3Logger', data);
     }
 }
+
+// export class InfluxDBLogger extends Consumer {
+//     constructor() { super() }
+//     async consume(log: any) {
+//         const responseInflux = await requestAPI<any>('influx', { method: 'POST', body: JSON.stringify(log) });
+//         const data = {
+//             request: log,
+//             response: responseInflux
+//         }
+//         console.log('InfluxDBLogger', data);
+//     }
+// }

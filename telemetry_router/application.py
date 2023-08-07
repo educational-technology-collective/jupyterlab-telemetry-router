@@ -10,22 +10,19 @@ class TelemetryRouterApp(ExtensionApp):
     mongo_cluster = Unicode("").tag(config=True)
     mongo_db = Unicode("").tag(config=True)
     mongo_collection = Unicode("").tag(config=True)
+    s3_url = Unicode("").tag(config=True)
 
-    telemetry = Bool(None, allow_none=True).tag(config=True)
-    save_interval = Int(10, allow_none=False).tag(config=True)
-    
     def initialize_settings(self):
         try:
             assert self.api, "The c.TelemetryRouterApp.api configuration setting must be set."
             assert self.mongo_cluster, "The c.TelemetryRouterApp.mongo_cluster configuration setting must be set."
+            assert self.s3_url, "The c.TelemetryRouterApp.s3_url configuration setting must be set."
 
             self.api = self.api.strip()
             self.mongo_cluster = self.mongo_cluster.strip()
             self.mongo_db = self.mongo_db.strip()
             self.mongo_collection = self.mongo_collection.strip()
-
-            if self.telemetry is None:
-                self.telemetry = False
+            self.s3_url = self.s3_url.strip()
 
         except Exception as e:
             self.log.error(str(e))

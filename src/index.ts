@@ -83,6 +83,7 @@ const plugin: JupyterFrontEndPlugin<TelemetryRouter> = {
     new ConsoleLogger();
     new MongoDBLogger();
     new S3Logger();
+    // new InfluxDBLogger();
 
     return telemetryRouter;
   }

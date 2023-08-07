@@ -42,6 +42,9 @@ class RouteHandler(ExtensionHandlerMixin, JupyterHandler):
             elif resource == 's3':
                 result = yield self.process_s3_request()
                 self.finish(json.dumps(result))
+            # elif resource == 'influx':
+            #     result = yield self.process_influx_request()
+            #     self.finish(json.dumps(result)) 
             else:
                 self.set_status(404)
 
@@ -90,7 +93,7 @@ class RouteHandler(ExtensionHandlerMixin, JupyterHandler):
             req = Request(
                 'POST', 
                 # self.extensionapp.api + "/s3",
-                "https://telemetry.mentoracademy.org/telemetry-edtech-labs-si-umich-edu/dev/test-telemetry",
+                self.extensionapp.s3_url,
                 data=data,
                 headers={
                     'content-type': 'application/json'
@@ -103,3 +106,24 @@ class RouteHandler(ExtensionHandlerMixin, JupyterHandler):
                 'reason': res.reason,
                 'text': res.text
             }
+
+    # @tornado.concurrent.run_on_executor
+    # def process_influx_request(self):
+    #     data = self.request.body
+
+    #     with Session() as s:
+    #         req = Request(
+    #             'POST', 
+    #             # self.extensionapp.api + "/influx",
+    #             data=data,
+    #             headers={
+    #                 'content-type': 'application/json'
+    #             }
+    #         )
+    #         prepped = s.prepare_request(req)
+    #         res = s.send(prepped, proxies=urllib.request.getproxies()) 
+    #         return {
+    #             'status_code': res.status_code,
+    #             'reason': res.reason,
+    #             'text': res.text
+    #         }
