@@ -9,7 +9,14 @@ import { INotebookContent } from '@jupyterlab/nbformat';
 
 import { Token } from '@lumino/coreutils';
 
-import { Consumer, ConsoleLogger, MongoDBLogger, S3Logger } from './consumer';
+import {
+  // Consumer,
+  // ConsoleLogger,
+  // MongoDBLogger,
+  // S3Logger,
+  // InfluxDBLogger,
+  ConsumerCollection,
+} from './consumer';
 
 import { requestAPI } from './handler';
 
@@ -27,11 +34,6 @@ export class TelemetryRouter implements ITelemetryRouter {
   private sequence: number = 0;
   private notebookPanel?: NotebookPanel;
 
-  static registeredConsumers: Consumer[] = [];
-  static registerConsumer(consumer: Consumer) {
-    TelemetryRouter.registeredConsumers.push(consumer);
-  }
-
   loadNotebookPanel(notebookPanel: NotebookPanel) {
     this.notebookPanel = notebookPanel
   }
@@ -39,8 +41,9 @@ export class TelemetryRouter implements ITelemetryRouter {
   async publishEvent(event: Object) {
     // Check if session id received is equal to the stored session id &
     // Update sequence number accordingly
-    if (this.sessionID === this.notebookPanel?.sessionContext.session?.id)
+    if (this.sessionID && this.sessionID === this.notebookPanel?.sessionContext.session?.id) {
       this.sequence = this.sequence + 1
+    }
     else {
       this.sessionID = this.notebookPanel?.sessionContext.session?.id
       this.sequence = 0
@@ -62,8 +65,10 @@ export class TelemetryRouter implements ITelemetryRouter {
     }
 
     // Send to consumer
-    TelemetryRouter.registeredConsumers.forEach(consumer => {
-      consumer.consume(log);
+    ConsumerCollection.forEach(consumer => {
+      if (consumer.id == 'ConsoleLogger') {
+        new consumer().consume(log);
+      }
     });
   }
 }
@@ -77,13 +82,7 @@ const plugin: JupyterFrontEndPlugin<TelemetryRouter> = {
     const version = await requestAPI<string>('version')
     console.log(`${PLUGIN_ID}: ${version}`)
 
-    const telemetryRouter = new TelemetryRouter()
-
-    // Register consumers for the router
-    new ConsoleLogger();
-    new MongoDBLogger();
-    new S3Logger();
-    // new InfluxDBLogger();
+    const telemetryRouter = new TelemetryRouter();
 
     return telemetryRouter;
   }

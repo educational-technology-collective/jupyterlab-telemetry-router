@@ -1,24 +1,13 @@
-import { TelemetryRouter } from ".";
 import { requestAPI } from "./handler";
-
-export class Consumer {
-    constructor() {
-        TelemetryRouter.registerConsumer(this);
-    }
-    consume(log: any) {
-        console.log('Base', log)
-    };
-}
-
-export class ConsoleLogger extends Consumer {
-    constructor() { super() }
+export class ConsoleLogger {
+    static id = 'ConsoleLogger';
     consume(log: any) {
         console.log('ConsoleLogger', log);
     }
 }
 
-export class MongoDBLogger extends Consumer {
-    constructor() { super() }
+export class MongoDBLogger {
+    static id = 'MongoDBLogger'
     async consume(log: any) {
         const responseMongo = await requestAPI<any>('mongo', { method: 'POST', body: JSON.stringify(log) });
         const data = {
@@ -29,8 +18,8 @@ export class MongoDBLogger extends Consumer {
     }
 }
 
-export class S3Logger extends Consumer {
-    constructor() { super() }
+export class S3Logger {
+    static id = 'S3Logger'
     async consume(log: any) {
         const responseS3 = await requestAPI<any>('s3', { method: 'POST', body: JSON.stringify(log) });
         const data = {
@@ -52,3 +41,9 @@ export class S3Logger extends Consumer {
 //         console.log('InfluxDBLogger', data);
 //     }
 // }
+
+export const ConsumerCollection = [
+    ConsoleLogger,
+    MongoDBLogger,
+    S3Logger
+]
