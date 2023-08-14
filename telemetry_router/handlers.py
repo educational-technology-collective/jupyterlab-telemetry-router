@@ -22,9 +22,7 @@ class RouteHandler(ExtensionHandlerMixin, JupyterHandler):
             if resource == 'version':
                 self.finish(json.dumps(__version__))
             elif resource == 'env':
-                self.finish(json.dumps({
-                    'workspaceID': os.getenv('WORKSPACE_ID') if os.getenv('WORKSPACE_ID') is not None else 'UNDEFINED'
-                    }))
+                self.finish(json.dumps(os.getenv('WORKSPACE_ID') if os.getenv('WORKSPACE_ID') is not None else 'UNDEFINED'))
             else:
                 self.set_status(404)
         except Exception as e:
