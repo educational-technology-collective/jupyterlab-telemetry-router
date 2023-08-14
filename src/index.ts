@@ -9,6 +9,12 @@ import { INotebookContent } from '@jupyterlab/nbformat';
 
 import { Token } from '@lumino/coreutils';
 
+import {
+  trace,
+  context,
+  SpanStatusCode
+} from "@opentelemetry/api";
+
 // import {
 //   // Consumer,
 //   // ConsoleLogger,
@@ -20,30 +26,34 @@ import { Token } from '@lumino/coreutils';
 
 import { requestAPI } from './handler';
 
-import {
-  trace,
-  // context,
-  SpanStatusCode
-} from "@opentelemetry/api";
-
 import { registerTracerProvider } from './otel';
 
 registerTracerProvider();
-const tracer = trace.getTracer('jupyter-opentelemetry'); // Returns a tracer from the **global** tracer provider.
+const tracer = trace.getTracer('telemetry'); // Returns a tracer from the **global** tracer provider.
 
-// let rootSpan: any;
+let rootSpan: any;
 const spanContextInjector = (data: any) => {
-  // const ctx = trace.setSpan(context.active(), rootSpan);
-  // const span = tracer.startSpan(data.event.eventName, undefined, ctx)
-  if (data.event.eventName) { }
-  const span = tracer.startSpan(data.event.eventName)
-
-  span.setStatus({
-    code: SpanStatusCode.OK,
-    message: 'OK'
-  })
-
-  span.end()
+  if (data.eventDetail.eventName) {
+    if (!rootSpan) {
+      rootSpan = tracer.startSpan(data.eventDetail.eventName)
+      rootSpan.setAttribute('event', JSON.stringify(data))
+      rootSpan.setStatus({
+        code: SpanStatusCode.OK,
+        message: 'OK'
+      })
+      rootSpan.end()
+    }
+    else {
+      const ctx = trace.setSpan(context.active(), rootSpan);
+      const span = tracer.startSpan(data.eventDetail.eventName, undefined, ctx)
+      span.setAttribute('event', JSON.stringify(data))
+      span.setStatus({
+        code: SpanStatusCode.OK,
+        message: 'OK'
+      })
+      span.end()
+    }
+  }
 }
 
 const PLUGIN_ID = 'telemetry-router:plugin';
@@ -52,7 +62,7 @@ export const ITelemetryRouter = new Token<ITelemetryRouter>(PLUGIN_ID)
 
 export interface ITelemetryRouter {
   loadNotebookPanel(notebookPanel: NotebookPanel): void;
-  publishEvent(event: Object): void;
+  publishEvent(eventDetail: Object, logNotebookContent?: Boolean): void;
 }
 
 export class TelemetryRouter implements ITelemetryRouter {
@@ -64,7 +74,7 @@ export class TelemetryRouter implements ITelemetryRouter {
     this.notebookPanel = notebookPanel
   }
 
-  async publishEvent(event: Object) {
+  async publishEvent(eventDetail: Object, logNotebookContent?: Boolean) {
     // // Check if session id received is equal to the stored session id &
     // // Update sequence number accordingly
     // if (this.sessionID && this.sessionID === this.notebookPanel?.sessionContext.session?.id) {
@@ -80,13 +90,13 @@ export class TelemetryRouter implements ITelemetryRouter {
 
     // Construct data
     const data = {
-      event: event,
+      eventDetail: eventDetail,
       notebookState: {
-        workspaceID: workspaceID,
         // sessionID: this.sessionID,
         // sequence: this.sequence,
+        workspaceID: workspaceID,
         notebookPath: this.notebookPanel?.context.path,
-        notebookContent: this.notebookPanel?.model?.toJSON() as INotebookContent
+        notebookContent: logNotebookContent ? this.notebookPanel?.model?.toJSON() as INotebookContent : null
       },
     }
 
