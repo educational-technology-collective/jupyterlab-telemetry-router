@@ -10,11 +10,6 @@ import { INotebookContent } from '@jupyterlab/nbformat';
 import { Token } from '@lumino/coreutils';
 
 import {
-  // Consumer,
-  // ConsoleLogger,
-  // MongoDBLogger,
-  // S3Logger,
-  // InfluxDBLogger,
   ConsumerCollection,
 } from './consumer';
 
@@ -26,48 +21,40 @@ export const ITelemetryRouter = new Token<ITelemetryRouter>(PLUGIN_ID)
 
 export interface ITelemetryRouter {
   loadNotebookPanel(notebookPanel: NotebookPanel): void;
-  publishEvent(event: Object): void;
+  publishEvent(eventDetail: Object, logNotebookContent?: Boolean): void;
 }
 
 export class TelemetryRouter implements ITelemetryRouter {
   private sessionID?: string;
-  private sequence: number = 0;
   private notebookPanel?: NotebookPanel;
+  private workspaceID?: string;
 
-  loadNotebookPanel(notebookPanel: NotebookPanel) {
+  async loadNotebookPanel(notebookPanel: NotebookPanel) {
     this.notebookPanel = notebookPanel
+    this.workspaceID = await requestAPI<any>('env')
   }
 
-  async publishEvent(event: Object) {
-    // Check if session id received is equal to the stored session id &
-    // Update sequence number accordingly
-    if (this.sessionID && this.sessionID === this.notebookPanel?.sessionContext.session?.id) {
-      this.sequence = this.sequence + 1
-    }
-    else {
+  publishEvent(eventDetail: Object, logNotebookContent?: Boolean) {
+    // Check if session id received is equal to the stored session id
+    if (!this.sessionID || this.sessionID !== this.notebookPanel?.sessionContext.session?.id) {
       this.sessionID = this.notebookPanel?.sessionContext.session?.id
-      this.sequence = 0
     }
 
-    // Get environment data
-    const { workspaceID } = await requestAPI<any>('env')
-
-    // Construct log
-    const log = {
-      event: event,
+    // Construct data
+    const data = {
+      eventDetail: eventDetail,
       notebookState: {
-        workspaceID: workspaceID,
         sessionID: this.sessionID,
-        sequence: this.sequence,
+        workspaceID: this.workspaceID,
         notebookPath: this.notebookPanel?.context.path,
-        notebookContent: this.notebookPanel?.model?.toJSON() as INotebookContent
+        notebookContent: logNotebookContent ? this.notebookPanel?.model?.toJSON() as INotebookContent : null
       },
     }
 
     // Send to consumer
     ConsumerCollection.forEach(consumer => {
       if (consumer.id == 'ConsoleLogger') {
-        new consumer().consume(log);
+        new consumer().consume(data);
       }
     });
   }
