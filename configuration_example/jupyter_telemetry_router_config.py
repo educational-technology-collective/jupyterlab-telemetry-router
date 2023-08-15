@@ -2,11 +2,11 @@
 
 c.TelemetryRouterApp.consumers = [
     {
-        'ID': 'S3Logger',
+        'id': 'S3Logger',
         'url': 'https://telemetry.mentoracademy.org/telemetry-edtech-labs-si-umich-edu/dev/test-telemetry' 
     },
     {
-        'ID': 'MongoLogger',
+        'id': 'MongoLogger',
         'url': 'https://68ltdi5iij.execute-api.us-east-1.amazonaws.com/mongo',
         'params': {
             'mongo_cluster': 'mengyanclustertest.6b83fsy.mongodb.net',

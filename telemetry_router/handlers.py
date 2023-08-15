@@ -70,7 +70,7 @@ class RouteHandler(ExtensionHandlerMixin, JupyterHandler):
                 response = s.send(prepped, proxies=urllib.request.getproxies())
 
                 result.append({
-                    'consumer': consumer.get('ID'),
+                    'consumer': consumer.get('id'),
                     'status_code': response.status_code,
                     'reason': response.reason,
                     'text': response.text

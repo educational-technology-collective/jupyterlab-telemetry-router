@@ -12,7 +12,7 @@ class TelemetryRouterApp(ExtensionApp):
         try:
             assert self.consumers, "The c.TelemetryRouterApp.consumers configuration setting must be set, please see the configuration example"
             for consumer in self.consumers:
-                assert consumer.get('ID'), "The ID of the consumer must be set, please see the configuration example"
+                assert consumer.get('id'), "The id of the consumer must be set, please see the configuration example"
                 assert consumer.get('url'), "The url of the consumer must be set, please see the configuration example"
 
         except Exception as e:
