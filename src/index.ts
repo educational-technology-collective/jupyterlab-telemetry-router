@@ -69,6 +69,9 @@ const plugin: JupyterFrontEndPlugin<TelemetryRouter> = {
     const version = await requestAPI<string>('version')
     console.log(`${PLUGIN_ID}: ${version}`)
 
+    const consumerConfig = await requestAPI<any>('consumerConfig')
+    console.log(consumerConfig)
+
     const telemetryRouter = new TelemetryRouter();
 
     return telemetryRouter;

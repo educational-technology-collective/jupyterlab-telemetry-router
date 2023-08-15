@@ -1,12 +1,18 @@
 import { requestAPI } from "./handler";
-export class ConsoleLogger {
+
+abstract class BaseLogger {
+    static id = 'BaseLogger';
+    abstract consume(log: any): void;
+}
+
+export class ConsoleLogger extends BaseLogger {
     static id = 'ConsoleLogger';
     consume(log: any) {
         console.log('ConsoleLogger', log);
     }
 }
 
-export class MongoDBLogger {
+export class MongoDBLogger extends BaseLogger {
     static id = 'MongoDBLogger'
     async consume(log: any) {
         const responseMongo = await requestAPI<any>('mongo', { method: 'POST', body: JSON.stringify(log) });
@@ -18,7 +24,7 @@ export class MongoDBLogger {
     }
 }
 
-export class S3Logger {
+export class S3Logger extends BaseLogger {
     static id = 'S3Logger'
     async consume(log: any) {
         const responseS3 = await requestAPI<any>('s3', { method: 'POST', body: JSON.stringify(log) });

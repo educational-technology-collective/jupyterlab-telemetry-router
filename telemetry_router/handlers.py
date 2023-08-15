@@ -23,6 +23,8 @@ class RouteHandler(ExtensionHandlerMixin, JupyterHandler):
                 self.finish(json.dumps(__version__))
             elif resource == 'env':
                 self.finish(json.dumps(os.getenv('WORKSPACE_ID') if os.getenv('WORKSPACE_ID') is not None else 'UNDEFINED'))
+            elif resource == 'consumerConfig':
+                self.finish(json.dumps(self.extensionapp.consumer))
             else:
                 self.set_status(404)
         except Exception as e:
@@ -34,6 +36,8 @@ class RouteHandler(ExtensionHandlerMixin, JupyterHandler):
     @tornado.gen.coroutine
     def post(self, resource):
         try:
+            if resource == 'consume':
+                result = yield self.consume()
             if resource == 'mongo':
                 result = yield self.process_mongo_request()
                 self.finish(json.dumps(result))
@@ -50,6 +54,10 @@ class RouteHandler(ExtensionHandlerMixin, JupyterHandler):
             self.log.error(str(e))
             self.set_status(500)
             self.finish(json.dumps(str(e)))
+
+    @tornado.concurrent.run_on_executor
+    def consume(self):
+        pass
 
     @tornado.concurrent.run_on_executor
     def process_mongo_request(self):
