@@ -1,6 +1,6 @@
 from .handlers import RouteHandler
 from jupyter_server.extension.application import ExtensionApp
-from traitlets import Unicode, Bool, Int
+from traitlets import Unicode, List
 
 class TelemetryRouterApp(ExtensionApp):
 
@@ -11,12 +11,14 @@ class TelemetryRouterApp(ExtensionApp):
     mongo_db = Unicode("").tag(config=True)
     mongo_collection = Unicode("").tag(config=True)
     s3_url = Unicode("").tag(config=True)
+    consumer = List([]).tag(config=True)
 
     def initialize_settings(self):
         try:
             assert self.api, "The c.TelemetryRouterApp.api configuration setting must be set."
             assert self.mongo_cluster, "The c.TelemetryRouterApp.mongo_cluster configuration setting must be set."
             assert self.s3_url, "The c.TelemetryRouterApp.s3_url configuration setting must be set."
+            assert self.consumer, "The c.TelemetryRouterApp.consumer configuration setting must be set"
 
             self.api = self.api.strip()
             self.mongo_cluster = self.mongo_cluster.strip()
