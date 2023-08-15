@@ -9,10 +9,6 @@ import { INotebookContent } from '@jupyterlab/nbformat';
 
 import { Token } from '@lumino/coreutils';
 
-import {
-  ConsumerCollection,
-} from './consumer';
-
 import { requestAPI } from './handler';
 
 const PLUGIN_ID = 'telemetry-router:plugin';
@@ -34,14 +30,14 @@ export class TelemetryRouter implements ITelemetryRouter {
     this.workspaceID = await requestAPI<any>('env')
   }
 
-  publishEvent(eventDetail: Object, logNotebookContent?: Boolean) {
+  async publishEvent(eventDetail: Object, logNotebookContent?: Boolean) {
     // Check if session id received is equal to the stored session id
     if (!this.sessionID || this.sessionID !== this.notebookPanel?.sessionContext.session?.id) {
       this.sessionID = this.notebookPanel?.sessionContext.session?.id
     }
 
     // Construct data
-    const data = {
+    const requestBody = {
       eventDetail: eventDetail,
       notebookState: {
         sessionID: this.sessionID,
@@ -51,12 +47,9 @@ export class TelemetryRouter implements ITelemetryRouter {
       },
     }
 
-    // Send to consumer
-    ConsumerCollection.forEach(consumer => {
-      if (consumer.id == 'ConsoleLogger') {
-        new consumer().consume(data);
-      }
-    });
+    // Send to backend consumer
+    const consumerResponse = await requestAPI<any>('consume', { method: 'POST', body: JSON.stringify(requestBody) })
+    console.log(requestBody, consumerResponse)
   }
 }
 
@@ -68,9 +61,6 @@ const plugin: JupyterFrontEndPlugin<TelemetryRouter> = {
   activate: async (app: JupyterFrontEnd) => {
     const version = await requestAPI<string>('version')
     console.log(`${PLUGIN_ID}: ${version}`)
-
-    const consumerConfig = await requestAPI<any>('consumerConfig')
-    console.log(consumerConfig)
 
     const telemetryRouter = new TelemetryRouter();
 

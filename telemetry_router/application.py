@@ -6,25 +6,14 @@ class TelemetryRouterApp(ExtensionApp):
 
     name = "telemetry_router"
 
-    api = Unicode("").tag(config=True)
-    mongo_cluster = Unicode("").tag(config=True)
-    mongo_db = Unicode("").tag(config=True)
-    mongo_collection = Unicode("").tag(config=True)
-    s3_url = Unicode("").tag(config=True)
-    consumer = List([]).tag(config=True)
+    consumers = List([]).tag(config=True)
 
     def initialize_settings(self):
         try:
-            assert self.api, "The c.TelemetryRouterApp.api configuration setting must be set."
-            assert self.mongo_cluster, "The c.TelemetryRouterApp.mongo_cluster configuration setting must be set."
-            assert self.s3_url, "The c.TelemetryRouterApp.s3_url configuration setting must be set."
-            assert self.consumer, "The c.TelemetryRouterApp.consumer configuration setting must be set"
-
-            self.api = self.api.strip()
-            self.mongo_cluster = self.mongo_cluster.strip()
-            self.mongo_db = self.mongo_db.strip()
-            self.mongo_collection = self.mongo_collection.strip()
-            self.s3_url = self.s3_url.strip()
+            assert self.consumers, "The c.TelemetryRouterApp.consumers configuration setting must be set, please see the configuration example"
+            for consumer in self.consumers:
+                assert consumer.get('ID'), "The ID of the consumer must be set, please see the configuration example"
+                assert consumer.get('url'), "The url of the consumer must be set, please see the configuration example"
 
         except Exception as e:
             self.log.error(str(e))
