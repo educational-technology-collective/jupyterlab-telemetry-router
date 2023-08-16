@@ -21,8 +21,8 @@ class RouteHandler(ExtensionHandlerMixin, JupyterHandler):
             self.set_header('Content-Type', 'application/json') 
             if resource == 'version':
                 self.finish(json.dumps(__version__))
-            elif resource == 'env':
-                self.finish(json.dumps(os.getenv('WORKSPACE_ID') if os.getenv('WORKSPACE_ID') is not None else 'UNDEFINED'))
+            elif resource == 'exporters':
+                self.finish(json.dumps(self.extensionapp.exporters))
             else:
                 self.set_status(404)
         except Exception as e:
@@ -34,8 +34,8 @@ class RouteHandler(ExtensionHandlerMixin, JupyterHandler):
     @tornado.gen.coroutine
     def post(self, resource):
         try:
-            if resource == 'consume':
-                result = yield self.consume()
+            if resource == 'export':
+                result = yield self.export()
                 self.finish(json.dumps(result))
             else:
                 self.set_status(404)
@@ -46,34 +46,52 @@ class RouteHandler(ExtensionHandlerMixin, JupyterHandler):
             self.finish(json.dumps(str(e)))
 
     @tornado.concurrent.run_on_executor
-    def consume(self):
-        consumers = self.extensionapp.consumers
+    def export(self):
+        exporters = self.extensionapp.exporters
         requestBody = json.loads(self.request.body)
-
         result = []
 
-        with Session() as s:
-            for consumer in consumers:
-                data = json.dumps({
-                    'data': requestBody,
-                    'params': consumer.get('params') # none if consumer does not contain 'params'
-                })
-                request = Request(
-                    'POST',
-                    consumer.get('url'),
-                    data=data,
-                    headers={
-                        'content-type': 'application/json'
-                    }
-                )
-                prepped = s.prepare_request(request)
-                response = s.send(prepped, proxies=urllib.request.getproxies())
+        for exporter in exporters:
+            env = []
+            if (exporter.get('env')):
+                for x in exporter.get('env'):
+                    env.append({x: os.getenv(x)})
+            data = {
+                'data': requestBody,
+                'params': exporter.get('params'), # none if exporter does not contain 'params'
+                'env': env
+            }
 
+            if (exporter.get('type') == 'console'):
                 result.append({
-                    'consumer': consumer.get('id'),
+                    'exporter': exporter.get('id'),
+                    'message': data
+                })
+            elif (exporter.get('type') == 'file'):
+                f = open(exporter.get('path'), 'a+', encoding='utf-8') # appending
+                json.dump(data, f, ensure_ascii=False, indent=4)
+                f.write(',')
+                f.close()
+                result.append({
+                    'exporter': exporter.get('id'),
+                })
+            elif (exporter.get('type') == 'remote'):
+                with Session() as s:
+                    request = Request(
+                        'POST',
+                        exporter.get('url'),
+                        data=json.dumps(data),
+                        headers={
+                            'content-type': 'application/json'
+                        }
+                    )
+                    prepped = s.prepare_request(request)
+                    response = s.send(prepped, proxies=urllib.request.getproxies())
+                result.append({
+                    'exporter': exporter.get('id'),
                     'status_code': response.status_code,
                     'reason': response.reason,
                     'text': response.text
                 })
 
-            return result
+        return result
