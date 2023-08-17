@@ -21,8 +21,6 @@ class RouteHandler(ExtensionHandlerMixin, JupyterHandler):
             self.set_header('Content-Type', 'application/json') 
             if resource == 'version':
                 self.finish(json.dumps(__version__))
-            elif resource == 'exporters':
-                self.finish(json.dumps(self.extensionapp.exporters))
             else:
                 self.set_status(404)
         except Exception as e:
@@ -52,14 +50,10 @@ class RouteHandler(ExtensionHandlerMixin, JupyterHandler):
         result = []
 
         for exporter in exporters:
-            env = []
-            if (exporter.get('env')):
-                for x in exporter.get('env'):
-                    env.append({x: os.getenv(x)})
             data = {
                 'data': requestBody,
                 'params': exporter.get('params'), # none if exporter does not contain 'params'
-                'env': env
+                'env': [{x: os.getenv(x)} for x in exporter.get('env')] if (exporter.get('env')) else []
             }
 
             if (exporter.get('type') == 'console'):
@@ -67,6 +61,7 @@ class RouteHandler(ExtensionHandlerMixin, JupyterHandler):
                     'exporter': exporter.get('id'),
                     'message': data
                 })
+
             elif (exporter.get('type') == 'file'):
                 f = open(exporter.get('path'), 'a+', encoding='utf-8') # appending
                 json.dump(data, f, ensure_ascii=False, indent=4)
@@ -75,6 +70,7 @@ class RouteHandler(ExtensionHandlerMixin, JupyterHandler):
                 result.append({
                     'exporter': exporter.get('id'),
                 })
+
             elif (exporter.get('type') == 'remote'):
                 with Session() as s:
                     request = Request(

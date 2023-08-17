@@ -23,16 +23,14 @@ export interface ITelemetryRouter {
 export class TelemetryRouter implements ITelemetryRouter {
   private sessionID?: string;
   private notebookPanel?: NotebookPanel;
-  private exporters?: [];
 
   /**
-   * Load notebookPanel and get exporters.
+   * Load notebookPanel.
    * 
    * @param {NotebookPanel} notebookPanel 
    */
   async loadNotebookPanel(notebookPanel: NotebookPanel) {
     this.notebookPanel = notebookPanel
-    this.exporters = await requestAPI<any>('exporters')
   }
 
   /**
@@ -42,7 +40,7 @@ export class TelemetryRouter implements ITelemetryRouter {
    * @param {Boolean} logNotebookContent A boolean indicating whether to log the entire notebook or not
    */
   async publishEvent(eventDetail: Object, logNotebookContent?: Boolean) {
-    if (!this.notebookPanel || !this.exporters) {
+    if (!this.notebookPanel) {
       throw Error('router needs to load notebookPanel first.')
     }
 
@@ -61,7 +59,7 @@ export class TelemetryRouter implements ITelemetryRouter {
       },
     }
 
-    // Export Data
+    // Send data to exporters 
     const response = await requestAPI<any>('export', { method: 'POST', body: JSON.stringify(requestBody) })
     console.log(response)
   }
