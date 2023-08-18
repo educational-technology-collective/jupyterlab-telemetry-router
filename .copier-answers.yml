@@ -11,4 +11,3 @@ project_short_description: A JupyterLab extension.
 python_name: telemetry_router
 repository: ''
 test: false
-

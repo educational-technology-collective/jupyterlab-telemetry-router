@@ -1,14 +1,9 @@
-# This file should be saved into one of the config directories provided by `jupyter lab --path`.
+# This file should be saved into one of the config directories provided by `jupyter --path`.
 
 c.TelemetryRouterApp.exporters = [
     {
         'type': 'console',
-        'id': 'ConsoleExporterA',
-    },
-    {
-        'type': 'console',
-        'id': 'ConsoleExporterB',
-        'env': ['WORKSPACE_ID']
+        'id': 'ConsoleExporter',
     },
     {
         'type': 'file',
