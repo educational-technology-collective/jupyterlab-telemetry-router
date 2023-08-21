@@ -1,11 +1,13 @@
 # telemetry_router
+[![PyPI](https://img.shields.io/pypi/v/telemetry-router.svg)](https://pypi.org/project/telemetry-router)
+[![npm](https://img.shields.io/npm/v/telemetry-router.svg)](https://www.npmjs.com/package/telemetry-router)
 
-[![Github Actions Status](/workflows/Build/badge.svg)](/actions/workflows/build.yml)
-A JupyterLab extension.
+A JupyterLab extension for routing JupyterLab telemetry data.
 
-This extension is composed of a Python package named `telemetry_router`
-for the server extension and a NPM package named `telemetry-router`
-for the frontend extension.
+Options to export JupyterLab user interaction (telemetry) data to console, local file, AWS S3 bucket, Mongo DB, and many more!
+
+*It needs to be used with extensions that can generates telemetry data, see examples [here](https://github.com/educational-technology-collective/telemetry-producer)*.
+
 
 ## Requirements
 
@@ -17,6 +19,66 @@ To install the extension, execute:
 
 ```bash
 pip install telemetry_router
+```
+
+## Configurations
+### Overview
+By editing the configuration file, users could define exporters easily without touching the code. Users could use multiple exporters at the same time.
+
+The telemetry-router extension provides 3 types of default exporters, `console` exporter, `file` exporter and `remote` exporter.
+
+`console` exporter logs data in the console.
+
+`file` exporter logs data into the local file indicated by `path`.
+
+`remote` exporter posts data to the remote endpoint indicated by `url`.
+
+The extension would extract the environment variable for each of the keys presented in `env`, and add the result to the data when exporting.
+
+The extension would add `params` directly to data when exporting. This feature is useful when users want to post data to lambda functions and wants to have additional parameters.
+
+### Syntax
+`type` and `id` are required for all exporters. 
+
+`path` is required for file exporters only. 
+
+`url` is required for remote exporters only.
+
+`env` and `params` are optional. 
+
+When the extension is being activated, a syntax check will be done first. Missing required fields would prevent Jupyter Lab from starting.
+
+**The configuration file should be saved into one of the config directories provided by `jupyter --path`.**
+
+### Example
+```
+c.TelemetryRouterApp.exporters = [
+    {
+        'type': 'console',
+        'id': 'ConsoleExporter',
+    },
+    {
+        'type': 'file',
+        'id': 'FileExporter',
+        'path': 'log',
+    },
+    {
+        'type': 'remote',
+        'id': 'S3Exporter',
+        'url': 'https://telemetry.mentoracademy.org/telemetry-edtech-labs-si-umich-edu/dev/test-telemetry',
+        'env': ['WORKSPACE_ID']
+    },
+    {
+        'type': 'remote',
+        'id': 'MongoDBExporter',
+        'url': 'https://68ltdi5iij.execute-api.us-east-1.amazonaws.com/mongo',
+        'params': {
+            'mongo_cluster': 'mengyanclustertest.6b83fsy.mongodb.net',
+            'mongo_db': 'telemetry',
+            'mongo_collection': 'dev'
+        }
+    },
+]
 ```
 
 ## Uninstall
