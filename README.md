@@ -1,28 +1,32 @@
-# telemetry_router
+# Telemetry Router
+
 [![PyPI](https://img.shields.io/pypi/v/telemetry-router.svg)](https://pypi.org/project/telemetry-router)
 [![npm](https://img.shields.io/npm/v/telemetry-router.svg)](https://www.npmjs.com/package/telemetry-router)
 
 A JupyterLab extension for routing JupyterLab telemetry data.
 
-Options to export JupyterLab user interaction (telemetry) data to console, local file, AWS S3 bucket, Mongo DB, and many more!
+**Options to export JupyterLab telemetry data to console, local file, AWS Storage Services, AWS Lambda functions, and more!**
 
-*It needs to be used with extensions that can generates telemetry data, see examples [here](https://github.com/educational-technology-collective/telemetry-producer)*.
+The `telemetry-router` extension needs to be used with extensions that can generates telemetry data, called telemetry producer.
 
+There is an example telemetry producer [here](https://github.com/educational-technology-collective/telemetry-producer) that could generate telemetry data of some basic JupyterLab events.
 
-## Requirements
+There is also a tutorial with a simple demo [here](https://github.com/educational-technology-collective/etc_jupyterlab_telemetry_producer_demo) for learning how to develop a custom telemetry producer.
+
+## Get started
+
+### Requirements
 
 - JupyterLab >= 4.0.0
 
-## Install
+### Install
 
-To install the extension, execute:
-
-```bash
-pip install telemetry_router
-```
+Generally, for deployment, the `telemetry-router` **should not** be installed separately from the telemetry producer extensions, as it is a dependency of the telemetry producer extensions and would be installed automatically when installing the producer extensions. See details [here](https://github.com/educational-technology-collective/etc_jupyterlab_telemetry_producer_demo#implement-the-extension-from-scratch).
 
 ## Configurations
+
 ### Overview
+
 By editing the configuration file, users could define exporters easily without touching the code. Users could use multiple exporters at the same time.
 
 The telemetry-router extension provides 3 types of default exporters, `console` exporter, `file` exporter and `remote` exporter.
@@ -38,20 +42,29 @@ The extension would extract the environment variable for each of the keys presen
 The extension would add `params` directly to data when exporting. This feature is useful when users want to post data to lambda functions and wants to have additional parameters.
 
 ### Syntax
-`type` and `id` are required for all exporters. 
 
-`path` is required for file exporters only. 
+`type` and `id` are required for all exporters.
+
+`path` is required for file exporters only.
 
 `url` is required for remote exporters only.
 
-`env` and `params` are optional. 
+`env` and `params` are optional.
 
 When the extension is being activated, a syntax check will be done first. Missing required fields would prevent Jupyter Lab from starting.
 
-**The configuration file should be saved into one of the config directories provided by `jupyter --path`.**
+### Configuration file name & path
+
+Jupyter Server expects the configuration file to be named after the extension’s name like so: **`jupyter_{extension name defined in application.py}_config.py`**. In our case, the configuration file name is `jupyter_telemetry_router_config.py`.
+
+Jupyter Server looks for an extension’s config file in a set of specific paths. **The configuration file should be saved into one of the config directories provided by `jupyter --path`.**
+
+For more details, see https://jupyter-server.readthedocs.io/en/latest/operators/configuring-extensions.html.
 
 ### Example
-```
+
+```python
+## in jupyter_telemetry_router_config.py
 c.TelemetryRouterApp.exporters = [
     {
         'type': 'console',
@@ -70,7 +83,7 @@ c.TelemetryRouterApp.exporters = [
     },
     {
         'type': 'remote',
-        'id': 'MongoDBExporter',
+        'id': 'MongoDBLambdaExporter',
         'url': 'https://68ltdi5iij.execute-api.us-east-1.amazonaws.com/mongo',
         'params': {
             'mongo_cluster': 'mengyanclustertest.6b83fsy.mongodb.net',
@@ -79,14 +92,6 @@ c.TelemetryRouterApp.exporters = [
         }
     },
 ]
-```
-
-## Uninstall
-
-To remove the extension, execute:
-
-```bash
-pip uninstall telemetry_router
 ```
 
 ## Troubleshoot
@@ -117,13 +122,13 @@ The `jlpm` command is JupyterLab's pinned version of
 
 ```bash
 # Clone the repo to your local environment
-# Change directory to the telemetry_router directory
+# Change directory to the telemetry-router directory
 # Install package in development mode
 pip install -e "."
 # Link your development version of the extension with JupyterLab
 jupyter labextension develop . --overwrite
 # Server extension must be manually installed in develop mode
-jupyter server extension enable telemetry_router
+jupyter server extension enable telemetry-router
 # Rebuild extension Typescript source after making changes
 jlpm build
 ```
@@ -149,8 +154,8 @@ jupyter lab build --minimize=False
 
 ```bash
 # Server extension must be manually disabled in develop mode
-jupyter server extension disable telemetry_router
-pip uninstall telemetry_router
+jupyter server extension disable telemetry-router
+pip uninstall telemetry-router
 ```
 
 In development mode, you will also need to remove the symlink created by `jupyter labextension develop`
