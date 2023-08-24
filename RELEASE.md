@@ -1,4 +1,4 @@
-# Making a new release of telemetry_router
+# Making a new release of jupyterlab-telemetry-router
 
 The extension can be published to `PyPI` and `npm` manually or using the [Jupyter Releaser](https://github.com/jupyter-server/jupyter_releaser).
 

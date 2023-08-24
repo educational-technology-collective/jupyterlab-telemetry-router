@@ -1,20 +1,20 @@
 {
-    "name": "telemetry-router",
-    "version": "0.1.20",
+    "name": "jupyterlab-telemetry-router",
+    "version": "0.1.23",
     "description": "A JupyterLab extension.",
     "keywords": [
         "jupyter",
         "jupyterlab",
         "jupyterlab-extension"
     ],
-    "homepage": "https://github.com/educational-technology-collective/telemetry-router",
+    "homepage": "https://github.com/educational-technology-collective/jupyterlab-telemetry-router",
     "bugs": {
-        "url": "https://github.com/educational-technology-collective/telemetry-router/issues"
+        "url": "https://github.com/educational-technology-collective/jupyterlab-telemetry-router/issues"
     },
     "license": "BSD-3-Clause",
     "author": {
-        "name": "mengyanw",
-        "email": "mengyanw@umich.edu"
+        "name": "Educational Technology Collective",
+        "email": "etc-jupyterlab-telemetry@umich.edu"
     },
     "files": [
         "lib/**/*.{d.ts,eot,gif,html,jpg,js,js.map,json,png,svg,woff2,ttf}",
@@ -25,7 +25,7 @@
     "style": "style/index.css",
     "repository": {
         "type": "git",
-        "url": "https://github.com/educational-technology-collective/telemetry-router.git"
+        "url": "https://github.com/educational-technology-collective/jupyterlab-telemetry-router.git"
     },
     "scripts": {
         "build": "jlpm build:lib && jlpm build:labextension:dev",
@@ -37,7 +37,7 @@
         "clean": "jlpm clean:lib",
         "clean:lib": "rimraf lib tsconfig.tsbuildinfo",
         "clean:lintcache": "rimraf .eslintcache .stylelintcache",
-        "clean:labextension": "rimraf telemetry_router/labextension telemetry_router/_version.py",
+        "clean:labextension": "rimraf jupyterlab-telemetry-router/labextension jupyterlab-telemetry-router/_version.py",
         "clean:all": "jlpm clean:lib && jlpm clean:labextension && jlpm clean:lintcache",
         "eslint": "jlpm eslint:check --fix",
         "eslint:check": "eslint . --cache --ext .ts,.tsx",
@@ -97,12 +97,12 @@
                     "pip"
                 ],
                 "base": {
-                    "name": "telemetry_router"
+                    "name": "jupyterlab-telemetry-router"
                 }
             }
         },
         "extension": true,
-        "outputDir": "telemetry_router/labextension"
+        "outputDir": "jupyterlab-telemetry-router/labextension"
     },
     "eslintIgnore": [
         "node_modules",

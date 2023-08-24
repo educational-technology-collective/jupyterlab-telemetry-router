@@ -1,5 +1,5 @@
 {
   "packageManager": "python",
-  "packageName": "telemetry_router",
-  "uninstallInstructions": "Use your Python package manager (pip, conda, etc.) to uninstall the package telemetry_router"
+  "packageName": "jupyterlab-telemetry-router",
+  "uninstallInstructions": "Use your Python package manager (pip, conda, etc.) to uninstall the package jupyterlab-telemetry-router"
 }

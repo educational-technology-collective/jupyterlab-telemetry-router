@@ -1,7 +1,7 @@
 {
   "ServerApp": {
     "jpserver_extensions": {
-      "telemetry_router": true
+      "jupyterlab-telemetry-router": true
     }
   }
 }

@@ -2,15 +2,15 @@ from .handlers import RouteHandler
 from jupyter_server.extension.application import ExtensionApp
 from traitlets import List
 
-class TelemetryRouterApp(ExtensionApp):
+class JupyterLabTelemetryRouterApp(ExtensionApp):
 
-    name = "telemetry_router"
+    name = "jupyterlab_telemetry_router"
 
     exporters = List([]).tag(config=True)
 
     def initialize_settings(self):
         try:
-            assert self.exporters, "The c.TelemetryRouterApp.exporters configuration must be set, please see the configuration example"
+            assert self.exporters, "The c.JupyterLabTelemetryRouterApp.exporters configuration must be set, please see the configuration example"
             for exporter in self.exporters:
                 assert exporter.get('type'), "The type of the exporter must be set, please see the configuration example"
                 assert exporter.get('type') in (['console', 'file', 'remote']), "The type of the exporter must be 'console', 'file', or 'remote'"
@@ -26,7 +26,7 @@ class TelemetryRouterApp(ExtensionApp):
 
     def initialize_handlers(self):
         try:
-            self.handlers.extend([(r"/telemetry-router/(.*)", RouteHandler)])
+            self.handlers.extend([(r"/jupyterlab-telemetry-router/(.*)", RouteHandler)])
         except Exception as e:
             self.log.error(str(e))
             raise e

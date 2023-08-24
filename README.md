@@ -1,17 +1,17 @@
-# Telemetry Router
+# JupyterLab Telemetry Router
 
-[![PyPI](https://img.shields.io/pypi/v/telemetry-router.svg)](https://pypi.org/project/telemetry-router)
-[![npm](https://img.shields.io/npm/v/telemetry-router.svg)](https://www.npmjs.com/package/telemetry-router)
+[![PyPI](https://img.shields.io/pypi/v/jupyterlab-telemetry-router.svg)](https://pypi.org/project/jupyterlab-telemetry-router)
+[![npm](https://img.shields.io/npm/v/jupyterlab-telemetry-router.svg)](https://www.npmjs.com/package/jupyterlab-telemetry-router)
 
 A JupyterLab extension for routing JupyterLab telemetry data.
 
 **Options to export JupyterLab telemetry data to console, local file, AWS Storage Services, AWS Lambda functions, and more!**
 
-The `telemetry-router` extension needs to be used with extensions that can generates telemetry data, called telemetry producer.
+The `jupyterlab-telemetry-router` extension needs to be used with extensions that can generates telemetry data, called telemetry producer.
 
-There is an example telemetry producer [here](https://github.com/educational-technology-collective/telemetry-producer) that could generate telemetry data of some basic JupyterLab events.
+There is an example telemetry producer [here](https://github.com/educational-technology-collective/jupyterlab-telemetry-producer) that could generate telemetry data of some basic JupyterLab events.
 
-There is also a tutorial with a simple demo [here](https://github.com/educational-technology-collective/etc_jupyterlab_telemetry_producer_demo) for learning how to develop a custom telemetry producer.
+There is also a tutorial with a simple demo [here](https://github.com/educational-technology-collective/jupyterlab-telemetry-producer-demo) for learning how to develop a custom telemetry producer.
 
 ## Get started
 
@@ -21,7 +21,7 @@ There is also a tutorial with a simple demo [here](https://github.com/educationa
 
 ### Install
 
-Generally, for deployment, the `telemetry-router` **should not** be installed separately from the telemetry producer extensions, as it is a dependency of the telemetry producer extensions and would be installed automatically when installing the producer extensions. See details [here](https://github.com/educational-technology-collective/etc_jupyterlab_telemetry_producer_demo#implement-the-extension-from-scratch).
+Generally, for deployment, `jupyterlab-telemetry-router` **should not** be installed separately from the telemetry producer extensions, as it is a dependency of the telemetry producer extensions and would be installed automatically when installing the producer extensions. See details [here](https://github.com/educational-technology-collective/jupyterlab-telemetry-producer-demo#implement-the-extension-from-scratch).
 
 ## Configurations
 
@@ -29,7 +29,7 @@ Generally, for deployment, the `telemetry-router` **should not** be installed se
 
 By editing the configuration file, users could define exporters easily without touching the code. Users could use multiple exporters at the same time.
 
-The telemetry-router extension provides 3 types of default exporters, `console` exporter, `file` exporter and `remote` exporter.
+The jupyterlab-telemetry-router extension provides 3 types of default exporters, `console` exporter, `file` exporter and `remote` exporter.
 
 `console` exporter logs data in the console.
 
@@ -55,7 +55,7 @@ When the extension is being activated, a syntax check will be done first. Missin
 
 ### Configuration file name & path
 
-Jupyter Server expects the configuration file to be named after the extension’s name like so: **`jupyter_{extension name defined in application.py}_config.py`**. In our case, the configuration file name is `jupyter_telemetry_router_config.py`.
+Jupyter Server expects the configuration file to be named after the extension’s name like so: **`jupyter_{extension name defined in application.py}_config.py`**. In our case, the extension name is defined [here](https://github.com/educational-technology-collective/jupyterlab-telemetry-router/blob/main/jupyterlab-telemetry-router/application.py#L7). So, the configuration file name is `jupyter_jupyterlab_telemetry_router_config.py`.
 
 Jupyter Server looks for an extension’s config file in a set of specific paths. **The configuration file should be saved into one of the config directories provided by `jupyter --path`.**
 
@@ -64,8 +64,8 @@ For more details, see https://jupyter-server.readthedocs.io/en/latest/operators/
 ### Example
 
 ```python
-## in jupyter_telemetry_router_config.py
-c.TelemetryRouterApp.exporters = [
+## in jupyter_jupyterlab-telemetry-router_config.py
+c.JupyterLabTelemetryRouterApp.exporters = [
     {
         'type': 'console',
         'id': 'ConsoleExporter',
@@ -122,13 +122,13 @@ The `jlpm` command is JupyterLab's pinned version of
 
 ```bash
 # Clone the repo to your local environment
-# Change directory to the telemetry-router directory
+# Change directory to the jupyterlab-telemetry-router directory
 # Install package in development mode
 pip install -e "."
 # Link your development version of the extension with JupyterLab
 jupyter labextension develop . --overwrite
 # Server extension must be manually installed in develop mode
-jupyter server extension enable telemetry-router
+jupyter server extension enable jupyterlab-telemetry-router
 # Rebuild extension Typescript source after making changes
 jlpm build
 ```
@@ -154,13 +154,13 @@ jupyter lab build --minimize=False
 
 ```bash
 # Server extension must be manually disabled in develop mode
-jupyter server extension disable telemetry-router
-pip uninstall telemetry-router
+jupyter server extension disable jupyterlab-telemetry-router
+pip uninstall jupyterlab-telemetry-router
 ```
 
 In development mode, you will also need to remove the symlink created by `jupyter labextension develop`
 command. To find its location, you can run `jupyter labextension list` to figure out where the `labextensions`
-folder is located. Then you can remove the symlink named `telemetry-router` within that folder.
+folder is located. Then you can remove the symlink named `jupyterlab-telemetry-router` within that folder.
 
 ### Packaging the extension
 

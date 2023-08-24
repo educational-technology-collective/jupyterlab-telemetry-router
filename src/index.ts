@@ -11,7 +11,7 @@ import { Token } from '@lumino/coreutils';
 
 import { requestAPI } from './handler';
 
-const PLUGIN_ID = 'telemetry-router:plugin';
+const PLUGIN_ID = 'jupyterlab-telemetry-router:plugin';
 
 export const ITelemetryRouter = new Token<ITelemetryRouter>(PLUGIN_ID);
 

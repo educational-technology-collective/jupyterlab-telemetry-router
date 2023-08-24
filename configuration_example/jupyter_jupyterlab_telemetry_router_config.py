@@ -1,6 +1,6 @@
 # This file should be saved into one of the config directories provided by `jupyter --path`.
 
-c.TelemetryRouterApp.exporters = [
+c.JupyterLabTelemetryRouterApp.exporters = [
     {
         'type': 'console',
         'id': 'ConsoleExporter',

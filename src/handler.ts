@@ -16,7 +16,7 @@ export async function requestAPI<T>(
   const settings = ServerConnection.makeSettings();
   const requestUrl = URLExt.join(
     settings.baseUrl,
-    'telemetry-router', // API Namespace
+    'jupyterlab-telemetry-router', // API Namespace
     endPoint
   );
 
