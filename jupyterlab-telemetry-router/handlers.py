@@ -85,9 +85,18 @@ class RouteHandler(ExtensionHandlerMixin, JupyterHandler):
                     response = s.send(prepped, proxies=urllib.request.getproxies())
                 result.append({
                     'exporter': exporter.get('id'),
-                    'status_code': response.status_code,
-                    'reason': response.reason,
-                    'text': response.text
+                    'message': {
+                        'status_code': response.status_code,
+                        'reason': response.reason,
+                        'text': response.text
+                    }
+                })
+
+            elif callable(exporter.get('type')):
+                message = exporter.get('type')(data)
+                result.append({
+                    'exporter': exporter.get('id'),
+                    'message': message
                 })
 
         return result

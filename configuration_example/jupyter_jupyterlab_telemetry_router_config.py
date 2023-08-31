@@ -1,4 +1,6 @@
 # This file should be saved into one of the config directories provided by `jupyter --path`.
+def customized_exporter(data):
+    print(data) # or do more here
 
 c.JupyterLabTelemetryRouterApp.exporters = [
     {
@@ -18,7 +20,7 @@ c.JupyterLabTelemetryRouterApp.exporters = [
     },
     {
         'type': 'remote',
-        'id': 'MongoDBExporter',
+        'id': 'MongoDBLambdaExporter',
         'url': 'https://68ltdi5iij.execute-api.us-east-1.amazonaws.com/mongo',
         'params': {
             'mongo_cluster': 'mengyanclustertest.6b83fsy.mongodb.net',
@@ -26,4 +28,8 @@ c.JupyterLabTelemetryRouterApp.exporters = [
             'mongo_collection': 'dev'
         }
     },
+    {
+        'type': customized_exporter,
+        'id': 'CustomizedExporter'
+    }
 ]

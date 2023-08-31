@@ -13,7 +13,7 @@ class JupyterLabTelemetryRouterApp(ExtensionApp):
             assert self.exporters, "The c.JupyterLabTelemetryRouterApp.exporters configuration must be set, please see the configuration example"
             for exporter in self.exporters:
                 assert exporter.get('type'), "The type of the exporter must be set, please see the configuration example"
-                assert exporter.get('type') in (['console', 'file', 'remote']), "The type of the exporter must be 'console', 'file', or 'remote'"
+                assert exporter.get('type') in (['console', 'file', 'remote']) or callable(exporter.get('type')), "The type of the exporter must be 'console', 'file', 'remote', or is a customized callable function"
                 assert exporter.get('id'), "The id of the exporter must be set, please see the configuration example"
                 if (exporter.get('type') == 'file'):
                     assert exporter.get('path'), "The path of the file exporter must be set, please see the configuration example"

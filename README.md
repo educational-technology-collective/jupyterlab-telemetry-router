@@ -41,6 +41,8 @@ The extension would extract the environment variable for each of the keys presen
 
 The extension would add `params` directly to data when exporting. This feature is useful when users want to post data to lambda functions and wants to have additional parameters.
 
+The configuration file accepts customized exporter functions. To do so, developers need to assign a callable exporter function to the `type`. See examples [here](#example).
+
 ### Syntax
 
 `type` and `id` are required for all exporters.
@@ -65,6 +67,10 @@ For more details, see https://jupyter-server.readthedocs.io/en/latest/operators/
 
 ```python
 ## in jupyter_jupyterlab-telemetry-router_config.py
+
+def customized_exporter(data):
+    print(data) # or do more here
+
 c.JupyterLabTelemetryRouterApp.exporters = [
     {
         'type': 'console',
@@ -91,6 +97,10 @@ c.JupyterLabTelemetryRouterApp.exporters = [
             'mongo_collection': 'dev'
         }
     },
+    {
+        'type': customized_exporter,
+        'id': 'CustomizedExporter'
+    }
 ]
 ```
 
