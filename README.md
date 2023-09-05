@@ -66,8 +66,7 @@ For more details, see https://jupyter-server.readthedocs.io/en/latest/operators/
 ### Example
 
 ```python
-## in jupyter_jupyterlab-telemetry-router_config.py
-
+# This file should be saved into one of the config directories provided by `jupyter --path`.
 def customized_exporter(data):
     print(data) # or do more here
 
@@ -86,6 +85,15 @@ c.JupyterLabTelemetryRouterApp.exporters = [
         'id': 'S3Exporter',
         'url': 'https://telemetry.mentoracademy.org/telemetry-edtech-labs-si-umich-edu/dev/test-telemetry',
         'env': ['WORKSPACE_ID']
+    },
+    {
+        'type': 'remote',
+        'id': 'InfluxDBLambdaExporter',
+        'url': 'https://68ltdi5iij.execute-api.us-east-1.amazonaws.com/influx',
+        'params': {
+            'influx_bucket': 'telemetry_dev',
+            'influx_measurement': 'si101_fa24'
+        }
     },
     {
         'type': 'remote',

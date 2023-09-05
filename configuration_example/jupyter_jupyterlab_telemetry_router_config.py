@@ -20,6 +20,15 @@ c.JupyterLabTelemetryRouterApp.exporters = [
     },
     {
         'type': 'remote',
+        'id': 'InfluxDBLambdaExporter',
+        'url': 'https://68ltdi5iij.execute-api.us-east-1.amazonaws.com/influx',
+        'params': {
+            'influx_bucket': 'telemetry_dev',
+            'influx_measurement': 'si101_fa24'
+        }
+    },
+    {
+        'type': 'remote',
         'id': 'MongoDBLambdaExporter',
         'url': 'https://68ltdi5iij.execute-api.us-east-1.amazonaws.com/mongo',
         'params': {
