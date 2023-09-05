@@ -1,13 +1,13 @@
-from requests import Session, Request
 from ._version import __version__
 from jupyter_server.base.handlers import JupyterHandler
 from jupyter_server.extension.handler import ExtensionHandlerMixin
-import os, json, concurrent, tornado
-import urllib.request
+import os, json, tornado
+from tornado.httpclient import AsyncHTTPClient, HTTPRequest
+from tornado.httputil import HTTPHeaders
+from tornado.escape import to_unicode
+
 
 class RouteHandler(ExtensionHandlerMixin, JupyterHandler):
-
-    executor = concurrent.futures.ThreadPoolExecutor(5)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -29,11 +29,10 @@ class RouteHandler(ExtensionHandlerMixin, JupyterHandler):
             self.finish(json.dumps(str(e)))
 
     @tornado.web.authenticated
-    @tornado.gen.coroutine
-    def post(self, resource):
+    async def post(self, resource):
         try:
             if resource == 'export':
-                result = yield self.export()
+                result = await self.export()
                 self.finish(json.dumps(result))
             else:
                 self.set_status(404)
@@ -43,8 +42,8 @@ class RouteHandler(ExtensionHandlerMixin, JupyterHandler):
             self.set_status(500)
             self.finish(json.dumps(str(e)))
 
-    @tornado.concurrent.run_on_executor
-    def export(self):
+    async def export(self):
+        http_client = AsyncHTTPClient()
         exporters = self.extensionapp.exporters
         requestBody = json.loads(self.request.body)
         result = []
@@ -72,24 +71,20 @@ class RouteHandler(ExtensionHandlerMixin, JupyterHandler):
                 })
 
             elif (exporter.get('type') == 'remote'):
-                with Session() as s:
-                    request = Request(
-                        'POST',
-                        exporter.get('url'),
-                        data=json.dumps(data),
-                        headers={
-                            'content-type': 'application/json'
-                        }
-                    )
-                    prepped = s.prepare_request(request)
-                    response = s.send(prepped, proxies=urllib.request.getproxies())
+                request = HTTPRequest(
+                    url=exporter.get('url'),
+                    method='POST',
+                    body=json.dumps(data),
+                    headers=HTTPHeaders({'content-type': 'application/json'})
+                )
+                response = await http_client.fetch(request, raise_error=False)
                 result.append({
                     'exporter': exporter.get('id'),
                     'message': {
-                        'status_code': response.status_code,
+                        'code': response.code,
                         'reason': response.reason,
-                        'text': response.text
-                    }
+                        'body': to_unicode(response.body),
+                    },
                 })
 
             elif callable(exporter.get('type')):
