@@ -1,0 +1,115 @@
+{
+    "data": {
+        "eventDetail": {
+            "eventName": "NotebookOpenEvent",
+            "eventTime": 1694118841943,
+            "eventInfo": {
+                "environ": {
+                    "COMMAND_MODE": "unix2003",
+                    "HOME": "/Users/mengyanw",
+                    "LOGNAME": "mengyanw",
+                    "MallocNanoZone": "0",
+                    "ORIGINAL_XDG_CURRENT_DESKTOP": "undefined",
+                    "PATH": "/Users/mengyanw/miniconda3/envs/telemetry-pr/bin:/Users/mengyanw/miniconda3/condabin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/munki:/Library/Apple/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin",
+                    "SHELL": "/bin/zsh",
+                    "SSH_AUTH_SOCK": "/private/tmp/com.apple.launchd.LYrBr9o2Ue/Listeners",
+                    "TMPDIR": "/var/folders/ft/p323pt_56kb75k_hw51dyps00000gr/T/",
+                    "USER": "mengyanw",
+                    "XPC_FLAGS": "0x0",
+                    "XPC_SERVICE_NAME": "0",
+                    "__CFBundleIdentifier": "com.microsoft.VSCode",
+                    "__CF_USER_TEXT_ENCODING": "0x1F8:0x0:0x0",
+                    "TERM_PROGRAM": "vscode",
+                    "TERM_PROGRAM_VERSION": "1.81.1",
+                    "LANG": "en_US.UTF-8",
+                    "COLORTERM": "truecolor",
+                    "GIT_ASKPASS": "/Applications/Visual Studio Code.app/Contents/Resources/app/extensions/git/dist/askpass.sh",
+                    "VSCODE_GIT_ASKPASS_NODE": "/Applications/Visual Studio Code.app/Contents/Frameworks/Code Helper (Plugin).app/Contents/MacOS/Code Helper (Plugin)",
+                    "VSCODE_GIT_ASKPASS_EXTRA_ARGS": "--ms-enable-electron-run-as-node",
+                    "VSCODE_GIT_ASKPASS_MAIN": "/Applications/Visual Studio Code.app/Contents/Resources/app/extensions/git/dist/askpass-main.js",
+                    "VSCODE_GIT_IPC_HANDLE": "/var/folders/ft/p323pt_56kb75k_hw51dyps00000gr/T/vscode-git-a1ba6e96fe.sock",
+                    "VSCODE_INJECTION": "1",
+                    "VSCODE_NONCE": "5e293b0d-24e7-4b4f-98aa-d48c3867472f",
+                    "ZDOTDIR": "/Users/mengyanw",
+                    "USER_ZDOTDIR": "/Users/mengyanw",
+                    "PWD": "/Users/mengyanw/Dropbox (University of Michigan)/telemetry_pr/jupyterlab-telemetry-router",
+                    "TERM": "xterm-256color",
+                    "SHLVL": "1",
+                    "OLDPWD": "/Users/mengyanw/Dropbox (University of Michigan)/telemetry_pr/jupyterlab-telemetry-router",
+                    "HOMEBREW_PREFIX": "/opt/homebrew",
+                    "HOMEBREW_CELLAR": "/opt/homebrew/Cellar",
+                    "HOMEBREW_REPOSITORY": "/opt/homebrew",
+                    "MANPATH": "/opt/homebrew/share/man::",
+                    "INFOPATH": "/opt/homebrew/share/info:",
+                    "P9K_TTY": "old",
+                    "_P9K_TTY": "/dev/ttys008",
+                    "ZSH": "/Users/mengyanw/.oh-my-zsh",
+                    "PAGER": "less",
+                    "LESS": "-R",
+                    "LSCOLORS": "Gxfxcxdxbxegedabagacad",
+                    "LS_COLORS": "di=1;36:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43",
+                    "P9K_SSH": "0",
+                    "_P9K_SSH_TTY": "/dev/ttys008",
+                    "CONDA_EXE": "/Users/mengyanw/miniconda3/bin/conda",
+                    "_CE_M": "",
+                    "_CE_CONDA": "",
+                    "CONDA_PYTHON_EXE": "/Users/mengyanw/miniconda3/bin/python",
+                    "CONDA_SHLVL": "2",
+                    "CONDA_PREFIX": "/Users/mengyanw/miniconda3/envs/telemetry-pr",
+                    "CONDA_DEFAULT_ENV": "telemetry-pr",
+                    "CONDA_PROMPT_MODIFIER": "(telemetry-pr) ",
+                    "WORKSPACE_ID": "mengyanDEV",
+                    "CONDA_PREFIX_1": "/Users/mengyanw/miniconda3",
+                    "_": "/Users/mengyanw/miniconda3/envs/telemetry-pr/bin/jupyter",
+                    "PYDEVD_USE_FRAME_EVAL": "NO"
+                }
+            }
+        },
+        "notebookState": {
+            "sessionID": "9eaf5fbc-8097-4fa5-8033-ec177290154f",
+            "notebookPath": "Untitled.ipynb",
+            "notebookContent": {
+                "metadata": {
+                    "kernelspec": {
+                        "name": "python3",
+                        "display_name": "Python 3 (ipykernel)",
+                        "language": "python"
+                    },
+                    "language_info": {
+                        "name": ""
+                    }
+                },
+                "nbformat_minor": 5,
+                "nbformat": 4,
+                "cells": [
+                    {
+                        "id": "27085b44-15e0-43e4-9ac5-debfd15d75d2",
+                        "cell_type": "code",
+                        "source": "",
+                        "metadata": {
+                            "trusted": true
+                        },
+                        "outputs": [],
+                        "execution_count": null
+                    }
+                ]
+            }
+        }
+    },
+    "params": null,
+    "env": []
+},{
+    "data": {
+        "eventDetail": {
+            "eventName": "NotebookHiddenEvent",
+            "eventTime": 1694118853482
+        },
+        "notebookState": {
+            "sessionID": "9eaf5fbc-8097-4fa5-8033-ec177290154f",
+            "notebookPath": "Untitled.ipynb",
+            "notebookContent": null
+        }
+    },
+    "params": null,
+    "env": []
+},

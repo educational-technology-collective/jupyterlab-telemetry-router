@@ -1,6 +1,6 @@
 {
     "name": "jupyterlab-telemetry-router",
-    "version": "0.1.25",
+    "version": "0.1.26",
     "description": "A JupyterLab extension.",
     "keywords": [
         "jupyter",
@@ -37,7 +37,7 @@
         "clean": "jlpm clean:lib",
         "clean:lib": "rimraf lib tsconfig.tsbuildinfo",
         "clean:lintcache": "rimraf .eslintcache .stylelintcache",
-        "clean:labextension": "rimraf jupyterlab-telemetry-router/labextension jupyterlab-telemetry-router/_version.py",
+        "clean:labextension": "rimraf jupyterlab_telemetry_router/labextension jupyterlab_telemetry_router/_version.py",
         "clean:all": "jlpm clean:lib && jlpm clean:labextension && jlpm clean:lintcache",
         "eslint": "jlpm eslint:check --fix",
         "eslint:check": "eslint . --cache --ext .ts,.tsx",
@@ -97,12 +97,12 @@
                     "pip"
                 ],
                 "base": {
-                    "name": "jupyterlab-telemetry-router"
+                    "name": "jupyterlab_telemetry_router"
                 }
             }
         },
         "extension": true,
-        "outputDir": "jupyterlab-telemetry-router/labextension"
+        "outputDir": "jupyterlab_telemetry_router/labextension"
     },
     "eslintIgnore": [
         "node_modules",

@@ -1,7 +1,0 @@
-{
-  "NotebookApp": {
-    "nbserver_extensions": {
-      "jupyterlab-telemetry-router": true
-    }
-  }
-}

@@ -8,6 +8,6 @@ has_settings: false
 kind: server
 labextension_name: jupyterlab-telemetry-router
 project_short_description: A JupyterLab extension.
-python_name: jupyterlab-telemetry-router
+python_name: jupyterlab_telemetry_router
 repository: ''
 test: false
