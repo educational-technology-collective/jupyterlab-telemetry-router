@@ -27,33 +27,10 @@ Generally, for deployment, `jupyterlab-telemetry-router` **should not** be insta
 
 ### Overview
 
-By editing the configuration file, users could define exporters easily without touching the code. Users could use multiple exporters at the same time.
+The `jupyterlab-telemetry-router` extension provides 4 default exporters, `command_line_exporter`, `console_exporter`, `file_exporter` and `remote_exporter`.
+Users could add these exporters by editing the configuration file. 
 
-The jupyterlab-telemetry-router extension provides 3 types of default exporters, `console` exporter, `file` exporter and `remote` exporter.
-
-`console` exporter logs data in the console.
-
-`file` exporter logs data into the local file indicated by `path`.
-
-`remote` exporter posts data to the remote endpoint indicated by `url`.
-
-The extension would extract the environment variable for each of the keys presented in `env`, and add the result to the data when exporting.
-
-The extension would add `params` directly to data when exporting. This feature is useful when users want to post data to lambda functions and wants to have additional parameters.
-
-The configuration file accepts customized exporter functions. To do so, developers need to assign a callable exporter function to the `type`. See examples [here](#example).
-
-### Syntax
-
-`type` and `id` are required for all exporters.
-
-`path` is required for file exporters only.
-
-`url` is required for remote exporters only.
-
-`env` and `params` are optional.
-
-When the extension is being activated, a syntax check will be done first. Missing required fields would prevent Jupyter Lab from starting.
+Developers could also use customized exporters. To do so, developers need to write a callable exporter function and assign it to the `exporter` field when writing the configuration file.
 
 ### Configuration file name & path
 
@@ -67,48 +44,65 @@ For more details, see https://jupyter-server.readthedocs.io/en/latest/operators/
 
 ```python
 # This file should be saved into one of the config directories provided by `jupyter --path`.
-def customized_exporter(data):
-    print(data) # or do more here
+from jupyterlab_telemetry_router import handlers
+
+def customized_exporter(args):
+    pass # do more here
+    return ({
+        'exporter': 'CustomizedCommandLineExporter',
+    })
 
 c.JupyterLabTelemetryRouterApp.exporters = [
     {
-        'type': 'console',
-        'id': 'ConsoleExporter',
+        'exporter': handlers.console_exporter,
     },
     {
-        'type': 'file',
-        'id': 'FileExporter',
-        'path': 'log',
+        'exporter': handlers.command_line_exporter,
     },
     {
-        'type': 'remote',
-        'id': 'S3Exporter',
-        'url': 'https://telemetry.mentoracademy.org/telemetry-edtech-labs-si-umich-edu/dev/test-telemetry',
-        'env': ['WORKSPACE_ID']
-    },
-    {
-        'type': 'remote',
-        'id': 'InfluxDBLambdaExporter',
-        'url': 'https://68ltdi5iij.execute-api.us-east-1.amazonaws.com/influx',
-        'params': {
-            'influx_bucket': 'telemetry_dev',
-            'influx_measurement': 'si101_fa24'
+        'exporter': handlers.file_exporter,
+        'args': {
+            'path': 'log'
         }
     },
     {
-        'type': 'remote',
-        'id': 'MongoDBLambdaExporter',
-        'url': 'https://68ltdi5iij.execute-api.us-east-1.amazonaws.com/mongo',
-        'params': {
-            'mongo_cluster': 'mengyanclustertest.6b83fsy.mongodb.net',
-            'mongo_db': 'telemetry',
-            'mongo_collection': 'dev'
+        'exporter': handlers.remote_exporter,
+        'args': {
+            'id': 'S3Exporter',
+            'url': 'https://telemetry.mentoracademy.org/telemetry-edtech-labs-si-umich-edu/dev/test-telemetry',
+            'env': ['WORKSPACE_ID'],
         }
     },
     {
-        'type': customized_exporter,
-        'id': 'CustomizedExporter'
-    }
+        'exporter': handlers.remote_exporter,
+        'args': {
+            'id': 'MongoDBLambdaExporter',
+            'url': 'https://68ltdi5iij.execute-api.us-east-1.amazonaws.com/mongo',
+            'params': {
+                'mongo_cluster': 'mengyanclustertest.6b83fsy.mongodb.net',
+                'mongo_db': 'telemetry',
+                'mongo_collection': 'dev'
+                },
+            'env': ['WORKSPACE_ID'],
+        }
+    },
+    {
+        'exporter': handlers.remote_exporter,
+        'args': {
+            'id': 'InfluxDBLambdaExporter',
+            'url': 'https://68ltdi5iij.execute-api.us-east-1.amazonaws.com/influx',
+            'params': {
+                'influx_bucket': 'telemetry_dev',
+                'influx_measurement': 'si101_fa24'
+            }
+        }
+    },
+    {
+        'exporter': customized_exporter,
+        'args': {
+            # do more here
+        }
+     },
 ]
 ```
 

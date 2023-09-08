@@ -1,44 +1,61 @@
 # This file should be saved into one of the config directories provided by `jupyter --path`.
-def customized_exporter(data):
-    print(data) # or do more here
+from jupyterlab_telemetry_router import handlers
+
+def customized_exporter(args):
+    pass # do more here
+    return ({
+        'exporter': 'CustomizedCommandLineExporter',
+    })
 
 c.JupyterLabTelemetryRouterApp.exporters = [
     {
-        'type': 'console',
-        'id': 'ConsoleExporter',
+        'exporter': handlers.console_exporter,
     },
     {
-        'type': 'file',
-        'id': 'FileExporter',
-        'path': 'log',
+        'exporter': handlers.command_line_exporter,
     },
     {
-        'type': 'remote',
-        'id': 'S3Exporter',
-        'url': 'https://telemetry.mentoracademy.org/telemetry-edtech-labs-si-umich-edu/dev/test-telemetry',
-        'env': ['WORKSPACE_ID']
-    },
-    {
-        'type': 'remote',
-        'id': 'InfluxDBLambdaExporter',
-        'url': 'https://68ltdi5iij.execute-api.us-east-1.amazonaws.com/influx',
-        'params': {
-            'influx_bucket': 'telemetry_dev',
-            'influx_measurement': 'si101_fa24'
+        'exporter': handlers.file_exporter,
+        'args': {
+            'path': 'log'
         }
     },
     {
-        'type': 'remote',
-        'id': 'MongoDBLambdaExporter',
-        'url': 'https://68ltdi5iij.execute-api.us-east-1.amazonaws.com/mongo',
-        'params': {
-            'mongo_cluster': 'mengyanclustertest.6b83fsy.mongodb.net',
-            'mongo_db': 'telemetry',
-            'mongo_collection': 'dev'
+        'exporter': handlers.remote_exporter,
+        'args': {
+            'id': 'S3Exporter',
+            'url': 'https://telemetry.mentoracademy.org/telemetry-edtech-labs-si-umich-edu/dev/test-telemetry',
+            'env': ['WORKSPACE_ID'],
         }
     },
     {
-        'type': customized_exporter,
-        'id': 'CustomizedExporter'
-    }
+        'exporter': handlers.remote_exporter,
+        'args': {
+            'id': 'MongoDBLambdaExporter',
+            'url': 'https://68ltdi5iij.execute-api.us-east-1.amazonaws.com/mongo',
+            'params': {
+                'mongo_cluster': 'mengyanclustertest.6b83fsy.mongodb.net',
+                'mongo_db': 'telemetry',
+                'mongo_collection': 'dev'
+                },
+            'env': ['WORKSPACE_ID'],
+        }
+    },
+    {
+        'exporter': handlers.remote_exporter,
+        'args': {
+            'id': 'InfluxDBLambdaExporter',
+            'url': 'https://68ltdi5iij.execute-api.us-east-1.amazonaws.com/influx',
+            'params': {
+                'influx_bucket': 'telemetry_dev',
+                'influx_measurement': 'si101_fa24'
+            }
+        }
+    },
+    {
+        'exporter': customized_exporter,
+        'args': {
+            # do more here
+        }
+     },
 ]

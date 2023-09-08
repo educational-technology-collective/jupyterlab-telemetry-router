@@ -1,12 +1,54 @@
 from ._version import __version__
 from jupyter_server.base.handlers import JupyterHandler
 from jupyter_server.extension.handler import ExtensionHandlerMixin
-import os, json, tornado
+import os, json, tornado, inspect
 from tornado.httpclient import AsyncHTTPClient, HTTPRequest
 from tornado.httputil import HTTPHeaders
 from tornado.escape import to_unicode
 
+# Exporters
+def console_exporter(args):
+    return ({
+        'exporter': args.get('id') or 'ConsoleExporter',
+        'message': args['data']
+    })
 
+def command_line_exporter(args):
+    print(args['data'])
+    return ({
+        'exporter': args.get('id') or 'CommandLineExporter',
+    }) 
+
+def file_exporter(args):
+    f = open(args.get('path'), 'a+', encoding='utf-8')
+    json.dump(args['data'], f, ensure_ascii=False, indent=4)
+    f.write(',')
+    f.close()
+    return({
+        'exporter': args.get('id') or 'FileExporter',
+    })
+ 
+async def remote_exporter(args):
+    http_client = AsyncHTTPClient()
+    request = HTTPRequest(
+        url=args.get('url'),
+        method='POST',
+        body=json.dumps({
+            'data': args['data'],
+            'params': args.get('params'), # none if exporter does not contain 'params'
+            'env': [{x: os.getenv(x)} for x in args.get('env')] if (args.get('env')) else []
+        }),
+        headers=HTTPHeaders({'content-type': 'application/json'})
+    )
+    response = await http_client.fetch(request, raise_error=False)
+    return({
+        'exporter': args.get('id') or 'RemoteExporter',
+        'message': {
+            'code': response.code,
+            'reason': response.reason,
+            'body': to_unicode(response.body),
+        },
+    })
 class RouteHandler(ExtensionHandlerMixin, JupyterHandler):
 
     def __init__(self, *args, **kwargs):
@@ -43,55 +85,22 @@ class RouteHandler(ExtensionHandlerMixin, JupyterHandler):
             self.finish(json.dumps(str(e)))
 
     async def export(self):
-        http_client = AsyncHTTPClient()
         exporters = self.extensionapp.exporters
-        requestBody = json.loads(self.request.body)
-        result = []
+        data = json.loads(self.request.body)
+        results = []
 
-        for exporter in exporters:
-            data = {
-                'data': requestBody,
-                'params': exporter.get('params'), # none if exporter does not contain 'params'
-                'env': [{x: os.getenv(x)} for x in exporter.get('env')] if (exporter.get('env')) else []
-            }
+        for each in exporters:
+            exporter = each.get('exporter')
+            args = each.get('args') or {} # id, url, path, params, env
+            args['data'] = data
 
-            if (exporter.get('type') == 'console'):
-                result.append({
-                    'exporter': exporter.get('id'),
-                    'message': data
+            if callable(exporter):
+                result = await exporter(args) if inspect.iscoroutinefunction(exporter) else exporter(args)
+                results.append(result)
+            else:
+                results.append({
+                    'message': '[Error] exporter is not callable'
                 })
 
-            elif (exporter.get('type') == 'file'):
-                f = open(exporter.get('path'), 'a+', encoding='utf-8') # appending
-                json.dump(data, f, ensure_ascii=False, indent=4)
-                f.write(',')
-                f.close()
-                result.append({
-                    'exporter': exporter.get('id'),
-                })
+        return results
 
-            elif (exporter.get('type') == 'remote'):
-                request = HTTPRequest(
-                    url=exporter.get('url'),
-                    method='POST',
-                    body=json.dumps(data),
-                    headers=HTTPHeaders({'content-type': 'application/json'})
-                )
-                response = await http_client.fetch(request, raise_error=False)
-                result.append({
-                    'exporter': exporter.get('id'),
-                    'message': {
-                        'code': response.code,
-                        'reason': response.reason,
-                        'body': to_unicode(response.body),
-                    },
-                })
-
-            elif callable(exporter.get('type')):
-                message = exporter.get('type')(data)
-                result.append({
-                    'exporter': exporter.get('id'),
-                    'message': message
-                })
-
-        return result
