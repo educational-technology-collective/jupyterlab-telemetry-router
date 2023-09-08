@@ -27,14 +27,14 @@ Generally, for deployment, `jupyterlab-telemetry-router` **should not** be insta
 
 ### Overview
 
-The `jupyterlab-telemetry-router` extension provides 4 default exporters, `command_line_exporter`, `console_exporter`, `file_exporter` and `remote_exporter`.
+The `jupyterlab-telemetry-router` extension provides 4 [default exporters](https://github.com/educational-technology-collective/jupyterlab-telemetry-router/blob/f9d6859e9e208a970658fba1776f578524b6f9e8/jupyterlab_telemetry_router/handlers.py#L9), `command_line_exporter`, `console_exporter`, `file_exporter` and `remote_exporter`.
 Users could add these exporters by editing the configuration file. 
 
-Developers could also use customized exporters. To do so, developers need to write a callable exporter function and assign it to the `exporter` field when writing the configuration file.
+Developers could also use [customized exporters](https://github.com/educational-technology-collective/jupyterlab-telemetry-router/blob/f9d6859e9e208a970658fba1776f578524b6f9e8/configuration_example/jupyter_jupyterlab_telemetry_router_config.py#L4). To do so, developers need to write a callable exporter function and assign it to the `exporter` field when writing the configuration file.
 
 ### Configuration file name & path
 
-Jupyter Server expects the configuration file to be named after the extension’s name like so: **`jupyter_{extension name defined in application.py}_config.py`**. In our case, the extension name is defined [here](https://github.com/educational-technology-collective/jupyterlab-telemetry-router/blob/main/jupyterlab-telemetry-router/application.py#L7). So, the configuration file name is `jupyter_jupyterlab_telemetry_router_config.py`.
+Jupyter Server expects the configuration file to be named after the extension’s name like so: **`jupyter_{extension name defined in application.py}_config.py`**. In our case, the extension name is defined [here](https://github.com/educational-technology-collective/jupyterlab-telemetry-router/blob/f9d6859e9e208a970658fba1776f578524b6f9e8/jupyterlab_telemetry_router/application.py#L7). So, the configuration file name is `jupyter_jupyterlab_telemetry_router_config.py`.
 
 Jupyter Server looks for an extension’s config file in a set of specific paths. **The configuration file should be saved into one of the config directories provided by `jupyter --path`.**
 
